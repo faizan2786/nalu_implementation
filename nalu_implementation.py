@@ -109,9 +109,7 @@ x3 = np.arange(0, 2000, step = 1, dtype= np.float32)
 
 
 # Make any function of x1,x2 and x3 to try the network on
-#y_train = (x1/4) + (x2/2) + x3**2
-
-y_train = x1 * x3
+y_train = (x1/4) + (x2/2) + x3**2
 
 x_train = np.column_stack( (x1,x2,x3) )
 
@@ -124,9 +122,7 @@ x2 = np.random.randint(1, 500, size=200).astype(np.float32)
 x3 = np.random.randint(50, 150 , size=200).astype(np.float32)
 
 x_test = np.column_stack((x1,x2,x3))
-#y_test = (x1/4) + (x2/2) + x3**2
-
-y_test = x1 * x3
+y_test = (x1/4) + (x2/2) + x3**2
 
 print()
 print(x_test.shape)
