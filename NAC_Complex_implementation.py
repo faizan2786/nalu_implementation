@@ -1,6 +1,5 @@
 import numpy as np
 import tensorflow as tf
-import keras
 import matplotlib.pyplot as plt
 
 # define a complex nac in log space -> for more complex arithmetic functions such as
