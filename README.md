@@ -1,5 +1,5 @@
 # nalu_implementation
-he research engineers at DeepMind including well known AI researcher, Andrew Trask have published an impressive paper on a 
+The research engineers at DeepMind including well known AI researcher, Andrew Trask have published an impressive paper on a 
 neural network model that can learn simple to complex numerical functions with great extrapolation (generalisation) ability.
 
 This repository is created to show the Neural Arithmetic Logic Unit (**NALU**) implementation in python using **Tensorflow**. 
