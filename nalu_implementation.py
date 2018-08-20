@@ -90,7 +90,7 @@ def nalu(x_in, out_units, epsilon=0.000001, get_weights=False):
     G = tf.get_variable(initializer=tf.random_normal_initializer(stddev=1.0),
                         shape=[in_shape, out_units], name="Gate_weights")
 
-    g = tf.matmul(x_in, G)
+    g =  tf.nn.sigmoid( tf.matmul(x_in, G) )
 
     y_out = g * a + (1 - g) * m
 
@@ -145,13 +145,13 @@ loss = tf.reduce_mean( (y_pred - Y) **2)
 
 
 # training parameters
-alpha = 0.1 # learning rate
-epochs = 7500
+alpha = 0.005 # learning rate
+epochs = 10000
 batch_size = 128
 
-train_itr = np.int32(np.ceil( float(epochs)/batch_size ))
+train_itr = np.int32(np.ceil( float(x_train.shape[0])/batch_size ))
 
-optimize = tf.train.AdamOptimizer(learning_rate=alpha).minimize(loss)
+optimize = tf.train.GradientDescentOptimizer(learning_rate=alpha).minimize(loss)
 
 with tf.Session() as sess:
 
