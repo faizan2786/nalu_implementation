@@ -90,7 +90,7 @@ def nalu(x_in, out_units, epsilon=0.000001, get_weights=False):
     G = tf.get_variable(initializer=tf.random_normal_initializer(stddev=1.0),
                         shape=[in_shape, out_units], name="Gate_weights")
 
-    g =  tf.nn.sigmoid( tf.matmul(x_in, G) )
+    g = tf.nn.sigmoid( tf.matmul(x_in, G) )
 
     y_out = g * a + (1 - g) * m
 
@@ -110,6 +110,7 @@ x3 = np.arange(0, 2000, step = 1, dtype= np.float32)
 
 # Make any function of x1,x2 and x3 to try the network on
 y_train = (x1/4) + (x2/2) + x3**2
+#y_train = x1 + x2 + x3
 
 x_train = np.column_stack( (x1,x2,x3) )
 
@@ -122,7 +123,10 @@ x2 = np.random.randint(1, 500, size=200).astype(np.float32)
 x3 = np.random.randint(50, 150 , size=200).astype(np.float32)
 
 x_test = np.column_stack((x1,x2,x3))
+
 y_test = (x1/4) + (x2/2) + x3**2
+
+#y_test = x1 + x2 + x3
 
 print()
 print(x_test.shape)
@@ -146,32 +150,24 @@ loss = tf.reduce_mean( (y_pred - Y) **2)
 
 # training parameters
 alpha = 0.005 # learning rate
-epochs = 10000
-batch_size = 128
+epochs = 30000
 
-train_itr = np.int32(np.ceil( float(x_train.shape[0])/batch_size ))
 
-optimize = tf.train.AdadeltaOptimizer(learning_rate=alpha).minimize(loss)
+optimize = tf.train.AdamOptimizer(learning_rate=alpha).minimize(loss)
 
 with tf.Session() as sess:
-
-    #init = tf.global_variables_initializer()
-    cost_history = []
 
     sess.run(tf.global_variables_initializer())
 
     # pre training evaluate
     print("Pre training MSE: ", sess.run (loss, feed_dict={X: x_test, Y:y_test}))
     print()
-    for i in range(epochs):
-        epoch_cost = 0
-        for itr in range(train_itr):
-            _, cost = sess.run([optimize, loss ], feed_dict={X:x_train, Y: y_train})
-            epoch_cost += cost
+    cost_history = []
 
-        mse = epoch_cost/train_itr
-        print("epoch: {}, MSE: {}".format( i, mse) )
-        cost_history.append(mse)
+    for i in range(epochs):
+        _, cost = sess.run([optimize, loss], feed_dict={X: x_train, Y: y_train})
+        print("epoch: {}, MSE: {}".format(i, cost))
+        cost_history.append(cost)
 
     # plot the MSE over each iteration
     plt.plot(np.arange(epochs),np.log(cost_history))  # Plot MSE on log scale
