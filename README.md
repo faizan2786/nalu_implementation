@@ -10,6 +10,7 @@ If you are new to NALUs, I strongly recommend my post for simple and intuitive e
 
 I have added three python files here.
 
-### NAC_simple_implementation.py
+#### 1. NAC_simple_implementation.py
 
 This file is the implemntation of a simple Neurl Accumulator(NAC) what is able to learn the additive numeric functions such as addition and subtraction.
+
