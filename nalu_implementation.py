@@ -10,25 +10,25 @@ def nac_simple_single_layer(x_in, out_units):
     Define a Neural Accumulator (NAC) for addition/subtraction -> Useful to learn the addition/subtraction operation
 
     Attributes:
-        x_in -> Input tensor
-        out_units -> number of output units
+        x_in -> Input vector
+        out_units -> number of output neurons
 
     Return:
-        Output tensor of mentioned shape and associated weights
+        Output tensor of mentioned shsape and associated weights
     '''
 
     in_features = x_in.shape[1]
 
     # define W_hat and M_hat
 
-    W_hat = tf.get_variable(name = "W_hat", initializer=tf.initializers.random_uniform(minval=-2, maxval=2),shape=[in_features, out_units])
-    M_hat = tf.get_variable(name = "M_hat", initializer=tf.initializers.random_uniform(minval=-2, maxval=2), shape=[in_features, out_units] )
+    W_hat = tf.get_variable(name = "W_hat", initializer=tf.initializers.random_uniform(minval=-2, maxval=2),shape=[in_features, out_units],  trainable=True)
+    M_hat = tf.get_variable(name = "M_hat", initializer=tf.initializers.random_uniform(minval=-2, maxval=2), shape=[in_features, out_units], trainable=True)
 
-    # Get W using the formula
+    # Get W
 
-    W = tf.nn.tanh(W_hat) * tf.nn.sigmoid(M_hat)        # element-wise product
+    W = tf.nn.tanh(W_hat) * tf.nn.sigmoid(M_hat)
 
-    y_out = tf.matmul(x_in, W)
+    y_out = tf.matmul(x_in,W)
 
     return y_out,W
 
@@ -70,7 +70,8 @@ def nalu(x_in, out_units, epsilon=0.000001, get_weights=False):
     :param x_in: input feature vector
     :param out_units: number of output units of the cell
     :param epsilon: small value to avoid log(0) in the output result
-    :param get_weights: True if want to get the weights of the model in return
+    :param get_weights: True if want to get the weights of the model
+                        in return
     :return: output tensor
     :return: Gate weight matrix
     :return: NAC1 (simple NAC) weight matrix
@@ -86,7 +87,8 @@ def nalu(x_in, out_units, epsilon=0.000001, get_weights=False):
     m, W_complex = nac_complex_single_layer(x_in, out_units, epsilon= epsilon)
 
     # Gate signal layer
-    G = tf.get_variable(initializer=tf.initializers.random_uniform(minval=-1,maxval=1), shape=[in_shape, out_units], name="Gate_weights")
+    G = tf.get_variable(initializer=tf.random_normal_initializer(stddev=1.0),
+                        shape=[in_shape, out_units], name="Gate_weights")
 
     g = tf.matmul(x_in, G)
 
@@ -107,8 +109,9 @@ x3 = np.arange(0, 2000, step = 1, dtype= np.float32)
 
 
 # Make any function of x1,x2 and x3 to try the network on
-y_train = (x1/4) + (x2/2) + x3**2
+#y_train = (x1/4) + (x2/2) + x3**2
 
+y_train = x1 * x3
 
 x_train = np.column_stack( (x1,x2,x3) )
 
@@ -121,7 +124,9 @@ x2 = np.random.randint(1, 500, size=200).astype(np.float32)
 x3 = np.random.randint(50, 150 , size=200).astype(np.float32)
 
 x_test = np.column_stack((x1,x2,x3))
-y_test = (x1/4) + (x2/2) + x3**2
+#y_test = (x1/4) + (x2/2) + x3**2
+
+y_test = x1 * x3
 
 print()
 print(x_test.shape)
@@ -138,19 +143,19 @@ y_pred  = nalu(X, out_units=1)
 y_pred = tf.squeeze(y_pred)             # Remove extra dimensions if any
 
 # Mean Square Error (MSE)
-#loss = tf.reduce_mean( (y_pred - Y) **2)
-loss= tf.losses.mean_squared_error(labels=y_train, predictions=y_pred)
+loss = tf.reduce_mean( (y_pred - Y) **2)
+#loss= tf.losses.mean_squared_error(labels=y_train, predictions=y_pred)
 
 
 
 # training parameters
-alpha = 0.05 # learning rate
+alpha = 0.1 # learning rate
 epochs = 7500
 batch_size = 128
 
 train_itr = np.int32(np.ceil( float(epochs)/batch_size ))
 
-optimize = tf.train.GradientDescentOptimizer(learning_rate=alpha).minimize(loss)
+optimize = tf.train.AdamOptimizer(learning_rate=alpha).minimize(loss)
 
 with tf.Session() as sess:
 
