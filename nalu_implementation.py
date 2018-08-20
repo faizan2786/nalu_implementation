@@ -151,7 +151,7 @@ batch_size = 128
 
 train_itr = np.int32(np.ceil( float(x_train.shape[0])/batch_size ))
 
-optimize = tf.train.GradientDescentOptimizer(learning_rate=alpha).minimize(loss)
+optimize = tf.train.AdadeltaOptimizer(learning_rate=alpha).minimize(loss)
 
 with tf.Session() as sess:
 
