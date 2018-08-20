@@ -67,7 +67,7 @@ loss = tf.reduce_mean( (y_pred - Y) **2)
 
 # training parameters
 alpha = 0.05    # learning rate
-epochs = 20000
+epochs = 22000
 
 optimize = tf.train.AdamOptimizer(learning_rate=alpha).minimize(loss)
 
